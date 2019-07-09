@@ -28,8 +28,8 @@
         </form>
         <ul class="list-group list-group-flush mt-5 text-light">
             <% for ( let i=0; i < taskToDo.length;  i++ ){%>
-                <li class="list-group-item" id="<%= i %>" ><%= taskToDo[i].title %></li>
-                <li class="list-group-item" id="<%= i %>" ><%= taskToDo[i].body %></li>
+                <li class="list-group-item" id="<%= taskToDo[i].ID %>" ><%= taskToDo[i].blogtitle %></li>
+                <li class="list-group-item" id="<%= taskToDo[i].ID %>" ><%= taskToDo[i].blogbody %></li>
             <% } %>
         </ul> 
     </div> 

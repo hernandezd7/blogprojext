@@ -1,8 +1,22 @@
 const express = require('express')
 const bodyParser = require('body-parser')
-const urlEncoded = bodyParser.urlencoded({extended: false})
+const mysql = require('mysql');
 
-const dummyData = [{title: "" , body: ""}];
+const db = mysql.createConnection({
+ host     : 'localhost',
+ user     : 'admin',
+ password : 'student',
+ database : 'blog'
+});
+
+db.connect(function(err){
+   if (err) throw err
+   console.log("My SQL is connected");
+});
+
+const urlEncoded = bodyParser.urlencoded({extended: false});
+
+const dummyData = [{title: "something" , body: "something"}];
 
 // setting up
 const app = express();
@@ -17,9 +31,13 @@ app.use(express.static('./public'));
 // ############### ROUTES ##############
 
 // Get for tasks: returns all tasks
-app.get('/', (req, res) => { 
-    // rendering task view and passing task to do data 
-    res.render('home', {taskToDo: dummyData});
+app.get('/', (req, res) => {
+    let sql = 'SELECT * FROM blogInfo';
+    db.query(sql, function (err, results) {
+        if (err) throw err;
+        // rendering tasks view and passing taskToDo data
+        res.render('home', {taskToDo: results});
+    });
 });
 
 app.get('/week1', (req, res) => { 
@@ -45,25 +63,30 @@ app.get('/week4', (req, res) => {
 
 // Post for tasks: posting a task
 app.post('/', urlEncoded, (req, res) =>{
-//   console.log("hitting Post route");
-// formating for incoming data to add to my data set
   let incomingItem = {}
-  incomingItem.title = req.body.title
-  incomingItem.body= req.body.body;
-  dummyData.push(incomingItem)
- console.log(dummyData)
-  res.redirect('/');
+  incomingItem.blogtitle = req.body.title;
+  incomingItem.blogbody= req.body.body;
+  let sql =  'INSERT INTO blogInfo SET ?';
+  db.query(sql, incomingItem ,(err, result) =>{
+    if(err) throw err;
+    console.log(result);
+    res.redirect('/')
+  });
 });
 // deleting specified task 
 app.delete("/:id", function(req, res){
-    // deleting item from data set 
-    dummyData.splice(req.params.id, 1);
-    // console.log(dummyData);
-    res.json(dummyData)
+    let sql = 'DELETE FROM blogInfo WHERE ID=' + req.params.id;
+    db.query(sql,(err, result) =>{
+        if(err) throw err;
+        console.log(result);
+        res.json(result)
+    });
 });
 
-app.listen(3000, function(err){
+app.listen(4000, function(err){
     if (err)
         console.log(err)
     console.log('Server is live on port ')
 })
+
+
