@@ -16,7 +16,7 @@ db.connect(function(err){
 
 const urlEncoded = bodyParser.urlencoded({extended: false});
 
-const dummyData = [{title: "something" , body: "something"}];
+const dummyData = [{title: "something" , week: "int", body: "something"}];
 
 // setting up
 const app = express();
@@ -36,36 +36,16 @@ app.get('/', (req, res) => {
     db.query(sql, function (err, results) {
         if (err) throw err;
         // rendering tasks view and passing taskToDo data
-        res.render('home', {taskToDo: results});
+        res.render('home', {blogInfo: results});
     });
 });
-
-app.get('/week1', (req, res) => { 
-    // rendering task view and passing task to do data 
-    res.render('week1', {taskToDo: dummyData});
-});
-
-app.get('/week2', (req, res) => { 
-    // rendering task view and passing task to do data 
-    res.render('week2', {taskToDo: dummyData});
-});
-
-app.get('/week3', (req, res) => { 
-    // rendering task view and passing task to do data 
-    res.render('week3', {taskToDo: dummyData});
-});
-
-app.get('/week4', (req, res) => { 
-    // rendering task view and passing task to do data 
-    res.render('week4', {taskToDo: dummyData});
-});
-
 
 // Post for tasks: posting a task
 app.post('/', urlEncoded, (req, res) =>{
   let incomingItem = {}
   incomingItem.blogtitle = req.body.title;
-  incomingItem.blogbody= req.body.body;
+  incomingItem.blogbody = req.body.body;
+  incomingItem.week= req.body.week;
   let sql =  'INSERT INTO blogInfo SET ?';
   db.query(sql, incomingItem ,(err, result) =>{
     if(err) throw err;
@@ -73,15 +53,27 @@ app.post('/', urlEncoded, (req, res) =>{
     res.redirect('/')
   });
 });
-// deleting specified task 
-app.delete("/:id", function(req, res){
-    let sql = 'DELETE FROM blogInfo WHERE ID=' + req.params.id;
-    db.query(sql,(err, result) =>{
-        if(err) throw err;
-        console.log(result);
-        res.json(result)
+
+app.get('/blogredirect/:ID', (req, res) =>{
+    console.log(req.params.ID)
+    let sql =  'SELECT * FROM blogInfo WHERE ID=' + req.params.ID;
+    db.query(sql, (err, result) =>{
+      if(err) throw err;
+      console.log(result);
+      res.render('blogredirect', {blogInfo: result[0]})
     });
 });
+
+
+// deleting specified task 
+// app.delete("/:id", function(req, res){
+//     let sql = 'DELETE FROM blogInfo WHERE ID=' + req.params.id;
+//     db.query(sql,(err, result) =>{
+//         if(err) throw err;
+//         console.log(result);
+//         res.json(result)
+//     });
+// });
 
 app.listen(4000, function(err){
     if (err)

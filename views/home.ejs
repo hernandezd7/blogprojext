@@ -23,13 +23,14 @@
         <form action="/" method="POST" class="mt-0">
             <input class="form-control form-control-lg" type="text" name="title" placeholder="Add title ..." required>
             <br>
+            <input class="form-control form-control-lg" type="number" name="week" placeholder="Add week ..." required integer>
+            <br>
             <textarea name="body" id="" cols="10" rows="10" style="margin: 0px; width: 429px; height: 258px;" placeholder="Add body ..."></textarea>
             <button type="submit" class="btn btn-primary btn-lg mt-1 mb-5 btn-block">Add Blog</button>
         </form>
         <ul class="list-group list-group-flush mt-5 text-light">
-            <% for ( let i=0; i < taskToDo.length;  i++ ){%>
-                <li class="list-group-item" id="<%= taskToDo[i].ID %>" ><%= taskToDo[i].blogtitle %></li>
-                <li class="list-group-item" id="<%= taskToDo[i].ID %>" ><%= taskToDo[i].blogbody %></li>
+            <% for ( let i=0; i < blogInfo.length;  i++ ){%>
+                <li class="list-group-item" id="<%= blogInfo[i].ID %>" ><a href="/blogredirect/<%= blogInfo[i].ID %>"><%= blogInfo[i].blogtitle %></a> from week <%= blogInfo[i].week %></li>
             <% } %>
         </ul> 
     </div> 
